@@ -1,24 +1,4 @@
-node_modules/
-.expo/
-.expo-shared/
-android/
-ios/
-web-build/
-dist/
-build/
-.DS_Store
-.vscode/
-.env
-.env.*
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-package-lock.json
-expo-debug.log*
-*.keystore
-*.p12
-*.jks
-/.expo/*# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 # dependencies
 node_modules/

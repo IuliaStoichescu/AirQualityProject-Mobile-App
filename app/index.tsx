@@ -1,14 +1,6 @@
 // app/index.tsx
-import { View, Text, StyleSheet, ImageBackground, Pressable, Button } from 'react-native';
-import { Link } from "expo-router";
-import {Href} from 'expo-router'
-
-const MY_ROUTE = "/authLogic/loginPage" as Href
-const MY_ROUTE2 = "/authLogic/signUp" as Href
-const MY_ROUTE3 = "/authLogic/confirmEmail" as Href
-
 import React, { useEffect, useState } from 'react';
-import {ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import { Redirect } from 'expo-router';
 import { getCurrentUser } from 'aws-amplify/auth';
 
@@ -19,7 +11,7 @@ export default function Index() {
   useEffect(() => {
     const check = async () => {
       try {
-        await getCurrentUser();  
+        await getCurrentUser(); 
         setSignedIn(true);
       } catch {
         setSignedIn(false);
@@ -40,7 +32,7 @@ export default function Index() {
   }
 
   if (signedIn) {
-    return <Redirect href="/homePage" />; 
+    return <Redirect href="/home/homePage" />;  
   }
 
   return <Redirect href="/authLogic/loginPage" />;

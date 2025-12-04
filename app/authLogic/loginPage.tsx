@@ -6,6 +6,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import {Amplify} from 'aws-amplify';
+import awsconfig from '../../src/aws-exports';
+Amplify.configure(awsconfig);
+
 const Login = () => {
   const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState(''); 
@@ -23,7 +27,7 @@ const Login = () => {
       }
 
       if (isSignedIn) {
-        router.push('/homePage');
+        router.push('/home/homePage');
       }
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : String(e);

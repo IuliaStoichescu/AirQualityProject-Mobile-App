@@ -5,6 +5,7 @@ import {Href} from 'expo-router'
 
 const MY_ROUTE = "/authLogic/loginPage" as Href
 const MY_ROUTE2 = "/authLogic/signUp" as Href
+const MY_ROUTE3 = "/authLogic/confirmEmail" as Href
 
 export default function Index() {
   return (
@@ -20,6 +21,9 @@ export default function Index() {
       </Link>
       <Link href={MY_ROUTE2} asChild>
         <Button title="Go to Sign Up" />
+      </Link>
+      <Link href={MY_ROUTE3} asChild>
+        <Button title="Go to Confirm email" />
       </Link>
     </View>
   );

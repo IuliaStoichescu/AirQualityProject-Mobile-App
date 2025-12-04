@@ -1,93 +1,126 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
-import React, { use } from 'react'
-import { useState } from 'react';
-import { signIn, signUp, signOut, confirmSignIn } from 'aws-amplify/auth';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { signIn } from 'aws-amplify/auth';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Login = () => {
-
-  const [email, setEmail ] = useState(''); 
-  const [password, setPassword ] = useState(''); 
- // const [userName, setUserName ] = useState(''); 
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState(''); 
   const [error, SetError] = useState('');
   const router = useRouter();
 
   const onSignInPress = async () => {
-    //console.warn("Sign In", email);
     SetError('');
-    try{
-      const {isSignedIn, nextStep} = await signIn({username : email, password});
-
-      console.log('Sign in result', isSignedIn,nextStep);
+    try {
+      const { isSignedIn, nextStep } = await signIn({ username: email, password });
 
       if (nextStep?.signInStep === 'CONFIRM_SIGN_UP') {
-      router.push({ pathname: '/authLogic/confirmEmail', params: { email } });
-      return;
-        }
-      if (isSignedIn) {
-        router.push('/homePage');
+        router.push({ pathname: '/authLogic/confirmEmail', params: { email } });
         return;
       }
-    }
-    catch (e) {
+
+      if (isSignedIn) {
+        router.push('/homePage');
+      }
+    } catch (e) {
       const errorMessage = e instanceof Error ? e.message : String(e);
-      if (e instanceof Error && e.name === 'UserNotConfirmedException') {
-      router.push({ pathname: '/authLogic/confirmEmail', params: { email } });
-      return;
-    }
       SetError(errorMessage);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome ! Here you Sign In.</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.screen}>
+        <View style={styles.card}>
+          
+          <Ionicons name="person-circle-outline" size={80} color="#333" style={{ marginBottom: 10 }} />
+          <Text style={styles.title}>Glad to have you back ! Sign In.</Text>
 
-      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail}/>
-      <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} value={password} onChangeText={setPassword}/>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+          <Text >Forgot Password ?</Text>
+          <TouchableOpacity style={styles.button} onPress={onSignInPress}>
+            <Text style={styles.buttonText}>Sign In</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={onSignInPress}>
-        <Text style={styles.buttonText} >Sign In</Text>
-      </TouchableOpacity>
-      {error &&<Text style = {{color : 'red'}}>{error}</Text>}
-    </View>
-  )
-}
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+};
 
-export default Login
+export default Login;
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    backgroundColor: 'white',
-    borderRadius: 5,
+  safeArea: {
+    flex: 1,
+  },
+
+  screen: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
+    padding: 24,
+  },
+  card: {
+    width: '90%',
+    maxWidth: 600,
+    backgroundColor: 'white',
+    borderRadius: 24,
+    padding: 32,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 3,
+    minHeight: 350,
+    alignItems: 'center',
   },
   title: {
     fontFamily: 'AInterSemi',
-    fontSize: 24,
-    marginBottom: 20,
+    fontSize: 26,
+    marginBottom: 24,
+    textAlign: 'center'
   },
   input: {
     borderWidth: 2,
     borderColor: 'gainsboro',
     padding: 10,
     marginVertical: 10,
-    width: '50%',
-    borderRadius: 5,
+    borderRadius: 8,
+    width: '100%',
   },
   button: {
-    backgroundColor: 'rgba(173, 216, 230, 0.6)', // pale blue + opacity
+    backgroundColor: '#333',
     paddingVertical: 12,
     paddingHorizontal: 40,
-    borderRadius: 20,
+    borderRadius: 999,
     marginTop: 20,
+    alignSelf: 'center' 
   },
   buttonText: {
-    color: 'black',
+    color: 'white',
     fontSize: 16,
     fontFamily: 'AInterSemi',
+    textAlign: 'center',
   },
-})
+  error: {
+    color: 'red',
+    marginTop: 12,
+  },
+});

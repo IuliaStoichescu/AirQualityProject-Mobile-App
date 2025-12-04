@@ -2,6 +2,8 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-nativ
 import React, { useState } from 'react';
 import { confirmSignUp, resendSignUpCode } from 'aws-amplify/auth';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
 const ConfirmEmail = () => {
   const router = useRouter();
@@ -44,7 +46,10 @@ const ConfirmEmail = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.screen}>
+      <View style={styles.card}>
+        <Ionicons name="shield-checkmark-outline" size={80} color="#333" style={{ marginBottom: 10 }} />
       <Text style={styles.title}>Confirm email</Text>
 
       <TextInput
@@ -74,43 +79,68 @@ const ConfirmEmail = () => {
       {error ? <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text> : null}
       {info ? <Text style={{ color: 'green', marginTop: 10 }}>{info}</Text> : null}
     </View>
+    </View>
+    </SafeAreaView>
   );
 };
 
 export default ConfirmEmail;
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    backgroundColor: 'white',
-    borderRadius: 5,
+  safeArea: {
+    flex: 1,
+  },
+
+  screen: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
+    padding: 24,
+  },
+  card: {
+    width: '90%',
+    maxWidth: 600,
+    backgroundColor: 'white',
+    borderRadius: 24,
+    padding: 32,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 3,
+    minHeight: 350,
+    alignItems: 'center',
   },
   title: {
     fontFamily: 'AInterSemi',
-    fontSize: 24,
-    marginBottom: 20,
+    fontSize: 26,
+    marginBottom: 24,
+    textAlign: 'center'
   },
   input: {
     borderWidth: 2,
     borderColor: 'gainsboro',
     padding: 10,
     marginVertical: 10,
-    width: '50%',
-    borderRadius: 5,
+    borderRadius: 8,
+    width: '100%',
   },
   button: {
-    backgroundColor: 'rgba(173, 216, 230, 0.6)',
+    backgroundColor: '#333',
     paddingVertical: 12,
     paddingHorizontal: 40,
-    borderRadius: 20,
+    borderRadius: 999,
     marginTop: 20,
+    alignSelf: 'center' 
   },
   buttonText: {
-    color: 'black',
+    color: 'white',
     fontSize: 16,
     fontFamily: 'AInterSemi',
+    textAlign: 'center',
+  },
+  error: {
+    color: 'red',
+    marginTop: 12,
   },
 });

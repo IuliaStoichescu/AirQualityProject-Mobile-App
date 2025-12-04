@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-iotairqualityproject-dev-a043e-authRole",
+      "UnauthRoleArn": "arn:aws:iam::057410425966:role/amplify-iotairqualityproject-dev-a043e-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::057410425966:role/amplify-iotairqualityproject-dev-a043e-authRole",
+      "Region": "eu-north-1",
+      "DeploymentBucketName": "amplify-iotairqualityproject-dev-a043e-deployment",
+      "UnauthRoleName": "amplify-iotairqualityproject-dev-a043e-unauthRole",
+      "StackName": "amplify-iotairqualityproject-dev-a043e",
+      "StackId": "arn:aws:cloudformation:eu-north-1:057410425966:stack/amplify-iotairqualityproject-dev-a043e/410f5290-d0fa-11f0-b8f9-0a51e150fcd3",
+      "AmplifyAppId": "d2foet9qkeoow7"
+    },
+    "categories": {
+      "auth": {
+        "iotairqualityprojecta9f8bfb2": {}
+      }
+    }
+  }
+}

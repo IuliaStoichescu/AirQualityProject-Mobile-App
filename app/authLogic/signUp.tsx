@@ -92,7 +92,7 @@ const SignUp = () => {
       {info ? <Text style={{ color: 'green', marginTop: 10 }}>{info}</Text> : null}
 
       <TouchableOpacity onPress={goToLogin} style={{ marginTop: 20 }}>
-        <Text>Already have an account? <Text style={{ fontWeight: 'bold' }}>Sign In</Text></Text>
+        <Text>Already have an account? <Text style={{ fontWeight: 'bold' }}>Sign In !</Text></Text>
       </TouchableOpacity>
       </View>
     </View>

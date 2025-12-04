@@ -7,29 +7,41 @@ const MY_ROUTE = "/authLogic/loginPage" as Href
 const MY_ROUTE2 = "/authLogic/signUp" as Href
 const MY_ROUTE3 = "/authLogic/confirmEmail" as Href
 
+import React, { useEffect, useState } from 'react';
+import {ActivityIndicator } from 'react-native';
+import { Redirect } from 'expo-router';
+import { getCurrentUser } from 'aws-amplify/auth';
+
 export default function Index() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Link href={MY_ROUTE} asChild>
-        <Button title="Go to Login" />
-      </Link>
-      <Link href={MY_ROUTE2} asChild>
-        <Button title="Go to Sign Up" />
-      </Link>
-      <Link href={MY_ROUTE3} asChild>
-        <Button title="Go to Confirm email" />
-      </Link>
-    </View>
-  );
+  const [checking, setChecking] = useState(true);
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const check = async () => {
+      try {
+        await getCurrentUser();  
+        setSignedIn(true);
+      } catch {
+        setSignedIn(false);
+      } finally {
+        setChecking(false);
+      }
+    };
+
+    check();
+  }, []);
+
+  if (checking) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  if (signedIn) {
+    return <Redirect href="/homePage" />; 
+  }
+
+  return <Redirect href="/authLogic/loginPage" />;
 }
- const style = StyleSheet.create({
-   button: {
-     marginTop: 20,
-   },
- });

@@ -30,6 +30,13 @@ const Login = () => {
       SetError(errorMessage);
     }
   };
+  const goToSignUp = () => {
+    router.push ('/authLogic/signUp'); 
+  };
+
+  const goToForgotPassword = () => {
+    router.push ('/authLogic/forgotPassword'); 
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -52,12 +59,17 @@ const Login = () => {
             value={password}
             onChangeText={setPassword}
           />
+          <TouchableOpacity  onPress={goToForgotPassword}>
           <Text >Forgot Password ?</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={onSignInPress}>
             <Text style={styles.buttonText}>Sign In</Text>
           </TouchableOpacity>
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
+          <TouchableOpacity onPress={goToSignUp} style={{ marginTop: 20 }}>
+                  <Text>Don't have an account? <Text style={{ fontWeight: 'bold' }}>Sign Up !</Text></Text>
+                </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>

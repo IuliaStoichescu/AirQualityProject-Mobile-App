@@ -19,9 +19,9 @@ export default function HomeLayout() {
         tabBarStyle: {
          width: '100%',
          position: 'absolute',
-         bottom: 24,
+         bottom: 15,
          alignSelf: "center",  
-         borderRadius: 999,
+         borderRadius: 700,
          height: 64,
          backgroundColor: '#262632ff',
          shadowColor: '#000',

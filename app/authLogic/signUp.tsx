@@ -4,6 +4,7 @@ import { signUp } from 'aws-amplify/auth';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import {storage} from '../storage/mmkv';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +13,8 @@ const SignUp = () => {
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const router = useRouter();
+
+  const attrs = null;
 
   const onSignUpPress = async () => {
     setError('');
@@ -39,7 +42,7 @@ const SignUp = () => {
       });
 
       console.log('Sign up result:', result);
-
+      storage.set('displayName', email);
       setInfo('Account created successfully! Please check your email to confirm your account.');
       router.push({ pathname: '/authLogic/confirmEmail', params: { email } });
 

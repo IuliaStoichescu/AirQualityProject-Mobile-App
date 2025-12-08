@@ -1,8 +1,9 @@
 import { signOut } from 'aws-amplify/auth';
 import { TouchableOpacity, View, Text,StyleSheet, FlatList, Platform } from 'react-native'; // Import Platform
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ImageBackground } from "react-native";
+import { ImageBackground ,Dimensions,TouchableHighlight} from "react-native";
 import { createMMKV } from 'react-native-mmkv'
+import { storage } from '../storage/mmkv';
 
 interface SensorItem {
   id: number;
@@ -77,8 +78,8 @@ const homePage = () => {
  
   return (
     <SafeAreaView style={styles.safeArea}>
-      
       <FlatList
+      
         data={DATA}
         showsVerticalScrollIndicator = {false}
         keyExtractor={(item) => item.id.toString()}
@@ -89,6 +90,7 @@ const homePage = () => {
           const shadowStyle = isOk ? styles.okShadow : styles.alertShadow;
 
           return (
+            
             <ImageBackground
               source={item.image}          
               style={[styles.card, shadowStyle]} 
@@ -113,6 +115,11 @@ const homePage = () => {
 export default homePage;
 
 const styles = StyleSheet.create({
+  circle: {
+   width: 44,
+   height: 44,
+   borderRadius: 44/2
+},
   separator: {
     height: 1,
     backgroundColor: '#262632ff',

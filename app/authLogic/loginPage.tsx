@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import {storage} from '../storage/mmkv';
 import {Amplify} from 'aws-amplify';
 import awsconfig from '../../src/aws-exports';
 Amplify.configure(awsconfig);
@@ -15,6 +15,8 @@ const Login = () => {
   const [password, setPassword] = useState(''); 
   const [error, SetError] = useState('');
   const router = useRouter();
+
+
 
   const onSignInPress = async () => {
     SetError('');

@@ -1,44 +1,100 @@
-import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import {View, Text,Image, Pressable} from 'react-native';  
-import { Avatar } from '@rneui/themed';
-import { useRouter } from "expo-router";
-import { storage } from '../storage/mmkv';
-import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { signOut } from 'aws-amplify/auth';
-
+import * as FileSystem from 'expo-file-system';
+import { Tabs, useRouter } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
+import { Image, Pressable, Text, View } from 'react-native';
+import { Menu } from 'react-native-paper';
+import { storage } from '../storage/mmkv';
+import { useIot } from './iot_context';
 const Default_Image = 'https://images.ctfassets.net/ub3bwfd53mwy/5WFv6lEUb1e6kWeP06CLXr/acd328417f24786af98b1750d90813de/4_Image.jpg?w=750' ;
-
 
 function HeaderAvatar() {
   const router = useRouter();
-  const [avatarUri, setAvatarUri] = useState(
-    storage.getString('profileAvatar') ?? Default_Image
-  );
+  const [avatarUri, setAvatarUri] = useState(Default_Image);
 
-  // 🔁 Every time Home tab/screen becomes focused, reload avatar from MMKV
+  const loadAvatar = useCallback(async () => {
+    const stored = storage.getString("profileAvatar");
+
+    if (!stored) {
+      setAvatarUri(Default_Image);
+      return;
+    }
+
+    // If it's a local file, make sure it still exists
+    if (stored.startsWith("file://")) {
+      const info = await FileSystem.getInfoAsync(stored);
+      if (!info.exists) {
+        storage.remove("profileAvatar");
+        setAvatarUri(Default_Image);
+        return;
+      }
+    }
+
+    setAvatarUri(stored);
+  }, []);
+
+  useEffect(() => {
+    loadAvatar(); // runs on cold start
+  }, [loadAvatar]);
+
   useFocusEffect(
     useCallback(() => {
-      const stored = storage.getString('profileAvatar');
-      if (stored) {
-        setAvatarUri(stored);
-      } else {
-        setAvatarUri(Default_Image);
-      }
-    }, [])
+      loadAvatar(); // runs when navigating back
+    }, [loadAvatar])
   );
 
   return (
-    <Pressable onPress={() => router.push('/home/profilePage')}>
-      <Image
-        source={{ uri: avatarUri }}
-        style={{ width: 34, height: 34, borderRadius: 17, marginRight: 12}}
-      />
+    <Pressable onPress={() => router.push("/home/profilePage")}>
+      <Image source={{ uri: avatarUri }} style={{ width: 34, height: 34, borderRadius: 17, marginRight: 12 }} />
     </Pressable>
   );
 }
+
+function RightHeaderGroup() {
+  const { latest } = useIot();
+  const [cloudVisible, setCloudVisible] = useState(false);
+  const [batteryVisible, setBatteryVisible] = useState(false);
+
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      
+      <Menu
+        visible={cloudVisible}
+        onDismiss={() => setCloudVisible(false)}
+        anchor={
+          <Pressable onPress={() => setCloudVisible(true)} style={{ marginRight: 15 }}>
+            <Ionicons name="cloud-done-outline" size={22} color="white" />
+          </Pressable>
+        }
+      >
+        <View style={{ padding: 10 }}>
+          <Text style={{ fontWeight: 'bold' }}>Cloud Status</Text>
+          <Text>{latest ? "Connected to MQTT" : "Disconnected"}</Text>
+        </View>
+      </Menu>
+
+      <Menu
+        visible={batteryVisible}
+        onDismiss={() => setBatteryVisible(false)}
+        anchor={
+          <Pressable onPress={() => setBatteryVisible(true)} style={{ marginRight: 15 }}>
+            <Ionicons name="battery-charging" size={22} color="#4CAF50" />
+          </Pressable>
+        }
+      >
+        <View style={{ padding: 10 }}>
+          <Text style={{ fontWeight: 'bold' }}>Device Battery Info</Text>
+          <Text>Level: 85%</Text>
+          <Text style={{ color: 'green' }}>Charging</Text>
+        </View>
+      </Menu>
+
+      <HeaderAvatar />
+    </View>
+  );
+}
+
 
 export default function HomeLayout() {
   const router = useRouter();
@@ -73,7 +129,7 @@ export default function HomeLayout() {
         name="homePage"
         options={{
           title: "Home", 
-          headerRight: () => <HeaderAvatar />,
+          headerRight: () => <RightHeaderGroup />,
           headerTitle: () => (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Ionicons name="leaf" size={24} color="#4CAF50" />

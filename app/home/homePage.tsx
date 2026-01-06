@@ -1,9 +1,13 @@
-import { signOut } from 'aws-amplify/auth';
-import { TouchableOpacity, View, Text,StyleSheet, FlatList, Platform } from 'react-native'; // Import Platform
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { FlatList, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ImageBackground ,Dimensions,TouchableHighlight} from "react-native";
-import { createMMKV } from 'react-native-mmkv'
-import { storage } from '../storage/mmkv';
+import { useIot } from './iot_context';
+(async () => {
+  const s = await fetchAuthSession();
+  console.log('Auth session:', s);
+  console.log('identityId:', s.identityId);
+  console.log('has credentials:', !!s.credentials);
+})();
 
 interface SensorItem {
   id: number;
@@ -50,11 +54,7 @@ const DATA = [
 ];
 
 const homePage = () => {
-  const storage = createMMKV(
-    {
-      id :"homePageStorage"
-    }
-  )
+  const { latest } = useIot();
   
   const isVlaueOk = (item: SensorItem): boolean => {
     const numericValue = parseFloat(item.value);
@@ -75,6 +75,8 @@ const homePage = () => {
         return true;
     }
   }
+
+  
  
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -90,7 +92,6 @@ const homePage = () => {
           const shadowStyle = isOk ? styles.okShadow : styles.alertShadow;
 
           return (
-            
             <ImageBackground
               source={item.image}          
               style={[styles.card, shadowStyle]} 
@@ -141,7 +142,8 @@ const styles = StyleSheet.create({
     paddingBottom: 120, 
   },
   safeArea: {
-    flex: 1,                 
+    flex: 1,  
+    backgroundColor: '#ffffffff',               
   },
   container: {
     flex: 1,

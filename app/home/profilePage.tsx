@@ -1,23 +1,16 @@
-import { View, Text, StyleSheet,TouchableOpacity,Image,Button, Pressable,TextInput } from 'react-native';
-import { signOut } from 'aws-amplify/auth';
-import { useRouter } from 'expo-router';
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { createMMKV } from 'react-native-mmkv'
-import { useState , useEffect} from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import { fetchUserAttributes, signOut, updatePassword } from 'aws-amplify/auth';
+import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
-import {storage} from '../storage/mmkv';
-import { getCurrentUser, fetchUserAttributes, updatePassword, type UpdatePasswordInput } from 'aws-amplify/auth';
-
-const loadUser = async () => {
-  const user = await getCurrentUser();
-  const attributes = await fetchUserAttributes();
-
-  console.log(attributes.email); 
-};
+import { useRouter } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
+import { Image, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { storage } from '../storage/mmkv';
 
 const Default_Image = 'https://images.ctfassets.net/ub3bwfd53mwy/5WFv6lEUb1e6kWeP06CLXr/acd328417f24786af98b1750d90813de/4_Image.jpg?w=750' ;
 
-export default function    Settings() {
+export default function Settings() {
 
   const [displayName, setDisplayName] = useState<string>('');
   const [oldPassword, setOldPassword] = useState('');
@@ -25,6 +18,9 @@ export default function    Settings() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [pwError, setPwError] = useState('');
   const [pwInfo, setPwInfo] = useState('');
+  const [avatarUri, setAvaratUri] = useState(
+    storage.getString('profileAvatar') ?? Default_Image
+  );
   
   const onChangePassword = async () => {
     setPwError('');
@@ -83,24 +79,62 @@ export default function    Settings() {
     router.replace('/authLogic/loginPage');
   }
 
-  const [avatarUri, setAvaratUri] = useState(
-    storage.getString('profileAvatar') ?? Default_Image
-  );
+  useFocusEffect(
+  useCallback(() => {
+    const stored = storage.getString("profileAvatar");
+    setAvaratUri(stored ?? Default_Image);
+  }, [])
+);
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
+const pickImage = async () => {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [1, 1],
+    quality: 1,
+  });
+
+  if (result.canceled) return;
+
+  const tempUri = result.assets?.[0]?.uri;
+  if (!tempUri) return;
+
+  if (Platform.OS === "web") {
+    const res = await fetch(tempUri);
+    const blob = await res.blob();
+
+    const dataUri = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(blob);
     });
-    if (!result.canceled) {
-      const uri = result.assets[0].uri;
-      setAvaratUri(uri);
-      storage.set('profileAvatar', uri);
-    }
+
+    setAvaratUri(dataUri);
+    storage.set("profileAvatar", dataUri);
+    return;
   }
-  
+
+  const docDir = FileSystem.documentDirectory;
+  if (!docDir) return;
+
+  const permanentUri = docDir + "profile.jpg";
+
+  const info = await FileSystem.getInfoAsync(permanentUri);
+  if (info.exists) {
+    await FileSystem.deleteAsync(permanentUri, { idempotent: true });
+  }
+
+  await FileSystem.copyAsync({
+    from: tempUri,
+    to: permanentUri,
+  });
+
+  setAvaratUri(permanentUri);
+  storage.set("profileAvatar", permanentUri);
+};
+
+//pick image based on platform 
 
   return (
     <View style={styles.container}>

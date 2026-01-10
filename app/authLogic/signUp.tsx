@@ -1,10 +1,10 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { signUp } from 'aws-amplify/auth';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import {storage} from '../storage/mmkv';
+import { storage } from '../../src/storage/mmkv';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');

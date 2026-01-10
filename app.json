@@ -2,6 +2,11 @@
   "expo": {
     "name": "Vitality Home",
     "slug": "iotAirQualityProject",
+    "extra": {
+      "ENV_REGION": "*",
+      "ENV_ENDPOINT": "*",
+      "ENV_IDENTITY_POOL_ID": "*"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/mobile_app_icon.png",
@@ -12,6 +17,7 @@
       "supportsTablet": true
     },
     "android": {
+      "permissions": ["android.permissions.POST_NOTIFICATIONS"],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -20,19 +26,15 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.iuli25.iotAirQualityProject"
+      "package": "com.iuli25.iotAirQualityProject",
+      "newArchEnabled": true
     },
     "web": {
       "output": "static",
       "favicon": "./assets/images/mobile_app_icon.png"
     },
     "plugins": [
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
-        }
-      ],
+      "expo-notifications",
       "expo-router",
       [
         "expo-splash-screen",

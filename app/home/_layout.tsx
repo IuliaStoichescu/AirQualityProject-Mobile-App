@@ -1,13 +1,16 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
+import * as Clipboard from 'expo-clipboard';
 import * as FileSystem from 'expo-file-system';
 import { Tabs, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 import { Menu } from 'react-native-paper';
-import { storage } from '../storage/mmkv';
-import { useIot } from './iot_context';
+import { useIot } from '../../src/iot/iot_context';
+import { storage } from '../../src/storage/mmkv';
+
 const Default_Image = 'https://images.ctfassets.net/ub3bwfd53mwy/5WFv6lEUb1e6kWeP06CLXr/acd328417f24786af98b1750d90813de/4_Image.jpg?w=750' ;
+type MqttPayload = Record<string, string | number>;
 
 function HeaderAvatar() {
   const router = useRouter();
@@ -21,7 +24,6 @@ function HeaderAvatar() {
       return;
     }
 
-    // If it's a local file, make sure it still exists
     if (stored.startsWith("file://")) {
       const info = await FileSystem.getInfoAsync(stored);
       if (!info.exists) {
@@ -35,12 +37,12 @@ function HeaderAvatar() {
   }, []);
 
   useEffect(() => {
-    loadAvatar(); // runs on cold start
+    loadAvatar();
   }, [loadAvatar]);
 
   useFocusEffect(
     useCallback(() => {
-      loadAvatar(); // runs when navigating back
+      loadAvatar();
     }, [loadAvatar])
   );
 
@@ -51,11 +53,44 @@ function HeaderAvatar() {
   );
 }
 
+const copyToClipboard = (text: string) => {
+    Clipboard.setStringAsync(text);
+  };
+
+function EmergencyCallHeader() {
+  const [emergencyVisible, setEmergencyVisible] = useState(false);
+  const number = "112";
+  
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Menu
+        visible={emergencyVisible}
+        onDismiss={() => {setEmergencyVisible(false)}}
+        anchor={
+          <Pressable onPress={() => setEmergencyVisible(true)} style={{ marginRight: 15 }}>
+            <Ionicons name="call" size={22} color="red" />
+          </Pressable>
+        }>
+          <View style={{ padding: 20, maxWidth: 250 }}>
+            <Text style={{ fontWeight: 'bold' }}>🚨Call Emergency
+            </Text>
+            <Pressable onPress={() => copyToClipboard(number)}>
+                <Text>European Emergency Number : 
+                  <Text> </Text>
+              <Text style={{ textDecorationLine: 'underline' }}>{number}</Text>
+              </Text>
+            </Pressable>
+          </View>
+          
+      </Menu>
+    </View>
+  )
+}
+
 function RightHeaderGroup() {
-  const { latest } = useIot();
+  const { sensorData, connState,battery } = useIot();
   const [cloudVisible, setCloudVisible] = useState(false);
   const [batteryVisible, setBatteryVisible] = useState(false);
-
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       
@@ -64,13 +99,13 @@ function RightHeaderGroup() {
         onDismiss={() => setCloudVisible(false)}
         anchor={
           <Pressable onPress={() => setCloudVisible(true)} style={{ marginRight: 15 }}>
-            <Ionicons name="cloud-done-outline" size={22} color="white" />
+            <Ionicons name="cloud-done-outline" size={22} color={connState === "Connected" ? "white" : "red"} />
           </Pressable>
         }
       >
         <View style={{ padding: 10 }}>
           <Text style={{ fontWeight: 'bold' }}>Cloud Status</Text>
-          <Text>{latest ? "Connected to MQTT" : "Disconnected"}</Text>
+          <Text>{connState === "Connected" ? "Connected to MQTT" : "Disconnected"}</Text>
         </View>
       </Menu>
 
@@ -85,8 +120,7 @@ function RightHeaderGroup() {
       >
         <View style={{ padding: 10 }}>
           <Text style={{ fontWeight: 'bold' }}>Device Battery Info</Text>
-          <Text>Level: 85%</Text>
-          <Text style={{ color: 'green' }}>Charging</Text>
+          <Text>Level: {battery.level}%</Text>
         </View>
       </Menu>
 
@@ -160,6 +194,17 @@ export default function HomeLayout() {
         name="notificationsPage"           
         options={{
           title: 'Notifications',
+          headerRight: () => <EmergencyCallHeader/>,
+          headerTitle: () => (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Ionicons name="leaf" size={24} color="#4CAF50" />
+              <Text style={{ fontSize: 15, fontWeight: "600", marginLeft: 8, color: 'white' }}>
+               Notifications and Alerts
+              </Text>
+              <View style={{ alignSelf: 'flex-end' }}>
+              </View>
+            </View>
+          ),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="notifications" size={size} color={color} />
           ),

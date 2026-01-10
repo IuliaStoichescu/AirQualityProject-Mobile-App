@@ -1,8 +1,18 @@
 // app/index.tsx
-import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import { Redirect } from 'expo-router';
 import { getCurrentUser } from 'aws-amplify/auth';
+import { Redirect } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
+
+/*(async () => {
+  const s = await fetchAuthSession();
+  console.log('Auth session:', s);
+  console.log('identityId:', s.identityId);
+  console.log('has credentials:', !!s.credentials);
+  console.log("IoT endpoint:", process.env.ENV_ENDPOINT);
+  console.log("Region:", process.env.ENV_REGION);
+})();*/
+
 
 export default function Index() {
   const [checking, setChecking] = useState(true);

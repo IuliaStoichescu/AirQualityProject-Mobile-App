@@ -1,12 +1,10 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { Amplify } from 'aws-amplify';
 import { signIn } from 'aws-amplify/auth';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import {storage} from '../storage/mmkv';
-import {Amplify} from 'aws-amplify';
 import awsconfig from '../../src/aws-exports';
 Amplify.configure(awsconfig);
 

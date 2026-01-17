@@ -30,9 +30,10 @@ Amplify.configure({
 })
 
 
+
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldPlaySound: false,
     shouldSetBadge: false,
     shouldShowBanner: true,
@@ -48,7 +49,15 @@ function AppWrapper() {
 SplashScreen.preventAutoHideAsync();
   return <Stack screenOptions={{ headerShown: false }} />;
 }
-useEffect(() => {
+
+
+export default function RootLayout() {
+  const [loaded, error] = useFonts({
+    ...Ionicons.font,
+    ...AntDesign.font,
+  });
+
+   useEffect(() => {
   (async () => {
     try {
       const s = await fetchAuthSession({ forceRefresh: true });
@@ -59,12 +68,7 @@ useEffect(() => {
     }
   })();
 }, []);
-
-export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    ...Ionicons.font,
-    ...AntDesign.font,
-  });
+ 
 
    useEffect(() => {
       (async () => {

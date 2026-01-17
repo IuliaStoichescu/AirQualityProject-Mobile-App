@@ -50,7 +50,7 @@ export const BASE_DATA = [
     switch (item.id) {
       case 1: 
         if(numericValue == 400) return "Normal air quality";
-        else if(numericValue >= 400 && numericValue <= 1000) return "Typical indoor air quality";
+        else if(numericValue >= 400 && numericValue <= 1500) return "Typical indoor air quality";
         else if(numericValue > 1000 && numericValue <= 2000) return "Poor air quality. May experience drowsiness. Consider ventilating";
         else if(numericValue > 2000 && numericValue <= 5000) return "Very poor air quality.May experience headaches, fatigue, stagnant, stuffiness, poor concentration, loss of focus, increased heart rate, nauseafy air. Immediate action required!";
         else return "Extremely poor air quality. Serious health effects possible. Evacuate the area immediately!";
@@ -65,7 +65,7 @@ export const BASE_DATA = [
         else return "Humidity is high. Risk of mold growth and discomfort. Consider using a dehumidifier.";
       case 4:
         if(numericValue < 1000) return "Pressure is low. May cause discomfort such as headaches or dizziness.";
-        else if(numericValue >= 1000 && numericValue <= 1020) return "Pressure is normal. No action needed.";
+        else if(numericValue >= 1000 && numericValue <= 1030) return "Pressure is normal. No action needed.";
         else return "Pressure is high. Consider ventilating the area.";
       default:
         return "No data available";
@@ -80,14 +80,28 @@ export const BASE_DATA = [
   
       switch (item.id) {
         case 1: 
-          return numericValue >= 400 && numericValue <= 1000;
+          return numericValue >= 400 && numericValue <= 1500;
         case 2: 
           return numericValue >= 16 && numericValue <= 24;
         case 3: 
           return numericValue >= 30 && numericValue <= 60;
         case 4:
-          return numericValue >= 1000 && numericValue <= 1020;
+          return numericValue >= 1000 && numericValue <= 1030;
         default:
           return true;
       }
     }
+  export const getIconName = (key: string) => {
+  switch (key) {
+    case 'first':
+      return 'cloud-outline';
+    case 'second':
+      return 'thermometer-outline';
+    case 'third':
+      return 'water-outline';
+    case 'fourth':
+      return 'speedometer-outline';
+    default:
+      return 'ellipse-outline';
+  }
+};

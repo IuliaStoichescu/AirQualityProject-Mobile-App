@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 import { Menu } from 'react-native-paper';
 import { useIot } from '../../src/iot/iot_context';
-import { storage } from '../../src/storage/mmkv';
+import { storage, useMMKVStorage } from '../../src/storage/mmkv';
 
 const Default_Image = 'https://images.ctfassets.net/ub3bwfd53mwy/5WFv6lEUb1e6kWeP06CLXr/acd328417f24786af98b1750d90813de/4_Image.jpg?w=750' ;
 type MqttPayload = Record<string, string | number>;
@@ -114,7 +114,15 @@ function RightHeaderGroup() {
         onDismiss={() => setBatteryVisible(false)}
         anchor={
           <Pressable onPress={() => setBatteryVisible(true)} style={{ marginRight: 15 }}>
-            <Ionicons name="battery-charging" size={22} color="#4CAF50" />
+              <Ionicons 
+                name={battery.level >= 0 && battery.level < 10 ? "battery-dead-outline" : 
+                      battery.level >= 10 && battery.level < 50 ? "battery-half-outline" : 
+                      battery.level >= 50 && battery.level <= 70 ? "battery-half-outline" : 
+                      "battery-full-outline"} 
+                size={22} 
+                color={battery.level >= 0 && battery.level < 10 ? "red" : 
+                       battery.level >= 10 && battery.level < 50 ? "yellow" : 
+                       battery.level >= 50 && battery.level <= 70 ? "white" : "#4CAF50"} />
           </Pressable>
         }
       >
@@ -132,6 +140,9 @@ function RightHeaderGroup() {
 
 export default function HomeLayout() {
   const router = useRouter();
+  const [unreadStatus] = useMMKVStorage<string>('hasUnreadAlerts', '0');
+  const showBadge = unreadStatus === '1';
+
   return (
     <Tabs
       screenOptions={{
@@ -184,6 +195,14 @@ export default function HomeLayout() {
         name="insightsPage"           
         options={{
           title: 'Insights',
+          headerTitle: () => (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Ionicons name="pie-chart-outline" size={24} color="#4CAF50" />
+              <Text style={{ fontSize: 15, fontWeight: "600", marginLeft: 8, color: 'white' }}>
+                Insights
+              </Text>
+            </View>
+          ),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="bar-chart-outline" size={24} color={color} />
           ),
@@ -206,7 +225,24 @@ export default function HomeLayout() {
             </View>
           ),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="notifications" size={size} color={color} />
+            <View style={{ width: size, height: size }}>
+              <Ionicons name="notifications" size={size} color={color} />
+              {showBadge && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    right: -2,
+                    top: -2,
+                    backgroundColor: 'red',
+                    borderRadius: 6,
+                    width: 12,
+                    height: 12,
+                    borderWidth: 2,
+                    borderColor: '#262632ff', 
+                  }}
+                />
+              )}
+            </View>    
           ),
         }}
       />

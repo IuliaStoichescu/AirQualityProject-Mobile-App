@@ -1,4 +1,3 @@
-// src/iot/iot_context.tsx
 import { CONNECTION_STATE_CHANGE, ConnectionState } from "@aws-amplify/pubsub";
 import { Hub } from "aws-amplify/utils";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -10,13 +9,15 @@ interface IotContextType {
   connState: ConnectionState;
   sensorData: SensorItem[];
   battery: { level: number; formatted: string; isLow: boolean };
+  deviceID: string | null;
 }
 
 const IotContext = createContext<IotContextType>({
   latest: null,
   connState: ConnectionState.Disconnected,
   sensorData: BASE_DATA.map(item => ({ ...item, value: "0", message: "No data available" })),
-  battery: { level: 0, formatted: "0.0", isLow: false }
+  battery: { level: 0, formatted: "0.0", isLow: false },
+  deviceID: null
 });
 
 export const IotProvider = ({ children }: { children: React.ReactNode }) => {
@@ -26,8 +27,8 @@ export const IotProvider = ({ children }: { children: React.ReactNode }) => {
     BASE_DATA.map(item => ({ ...item, value: "0", message: "No data available" }))
   );
   const [battery, setBattery] = useState({ level: 0, formatted: "0.0", isLow: false });
+  const [deviceID, setDeviceID] = useState<string | null>(null);
 
-  // Update sensor data whenever latest changes
   useEffect(() => {
     if (!latest) {
       console.log("Latest is null, skipping sensor update");
@@ -58,16 +59,26 @@ export const IotProvider = ({ children }: { children: React.ReactNode }) => {
       isLow: bat < 20 && bat > 0
     });
 
+    const devID = latest["deviceID"] ? String(latest["deviceID"]) : null;
+    console.log(`Device ID: ${devID}`);
+    setDeviceID(devID);
+
     console.log("Sensor data updated successfully");
   }, [latest]);
 
   useEffect(() => {
     console.log("IotProvider: Initializing MQTT connection...");
+
+    
    
     const hubListener = Hub.listen("pubsub", (capsule: any) => {
+      console.log("Hub event received:", capsule.payload.event);
       if (capsule?.payload?.event === CONNECTION_STATE_CHANGE) {
         const newState = capsule.payload.data.connectionState;
-        console.log("🔌 Connection State:", newState);
+        console.log("Connection State:", newState);
+      if (capsule.payload.data.error) {
+        console.error("Connection error details:", capsule.payload.data.error);
+      }
         setConnState(newState);
       }
     });
@@ -82,8 +93,6 @@ export const IotProvider = ({ children }: { children: React.ReactNode }) => {
           subscriptionActive = true;
           console.log("SUBSCRIPTION ACTIVE!");
         }
-        
-        console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         console.log("MQTT MESSAGE RECEIVED!");
         console.log("Raw data:", data);
         console.log("Type:", typeof data);
@@ -107,15 +116,15 @@ export const IotProvider = ({ children }: { children: React.ReactNode }) => {
 
     console.log("Subscription created");
 
-    // Test: Manually set data after 3 seconds to verify the flow works
     const testTimer = setTimeout(() => {
       console.log("TEST: Manually setting test data...");
       setLatest({
-        "1": "850",
-        "2": "22.5",
-        "3": "45",
-        "4": "1013",
-        "Battery": "90"
+        "deviceID": "device123",
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": "",
+        "Battery": ""
       });
     }, 3000);
 
@@ -128,7 +137,7 @@ export const IotProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <IotContext.Provider value={{ latest, connState, sensorData, battery }}>
+    <IotContext.Provider value={{ latest, connState, sensorData, battery, deviceID }}>
       {children}
     </IotContext.Provider>
   );

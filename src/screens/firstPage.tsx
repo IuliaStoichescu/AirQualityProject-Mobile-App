@@ -4,7 +4,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useIot } from '@/src/iot/iot_context';
 import { TimeRangeDropdown, RangeKey } from "../constants/picker";
 import { Ionicons } from "@expo/vector-icons";
-import { CO2Chart } from "../helpers/chartsForSensors"; 
+import { SensorChart } from "../helpers/chartsForSensors"; 
 
 export default function FirstRoute() {
   const [range, setRange] = useState<RangeKey>("day");
@@ -86,7 +86,7 @@ export default function FirstRoute() {
         </View>
       ) : (
         
-        <CO2Chart range={range} data={co2} NORMAL_MIN={NORMAL_MIN_CO2} NORMAL_MAX={NORMAL_MAX_CO2} name="CO2" unit="ppm" outOfBoundsValue={5000} />
+        <SensorChart range={range} data={co2} NORMAL_MIN={NORMAL_MIN_CO2} NORMAL_MAX={NORMAL_MAX_CO2} name="CO2" unit="ppm" fieldName="co2" />
       )}
     </ScrollView>
   );

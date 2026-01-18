@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { View, Text, StyleSheet, FlatList, Pressable, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, Alert, Platform } from 'react-native';
 import { useMMKVStorage } from '../../src/storage/mmkv';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
@@ -53,17 +53,24 @@ export default function NotificationsPage() {
   };
 
   const clearAll = () => {
-    if (!alertLogs.length) return;
+  if (!alertLogs.length) return;
 
-    Alert.alert(
-      'Clear all alerts?',
-      'This will delete all notifications from the last 24h.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Clear', style: 'destructive', onPress: () => [setAlertLogs([]),setLastAlertTime({})] },
-      ]
-    );
+  const doClear = () => {
+    setAlertLogs([]);
+    setLastAlertTime({});
   };
+
+  if (Platform.OS === "web") {
+    const ok = window.confirm("Clear all alerts? This will delete all notifications from the last 24h.");
+    if (ok) doClear();
+    return;
+  }
+
+  Alert.alert("Clear all alerts?", "This will delete all notifications from the last 24h.", [
+    { text: "Cancel", style: "cancel" },
+    { text: "Clear", style: "destructive", onPress: doClear },
+  ]);
+};
 
   const renderItem = ({ item }: { item: any }) => {
     const borderColor = getColorForItem(item.id);

@@ -246,7 +246,26 @@ export default function HomeLayout() {
           ),
         }}
       />
-
+      <Tabs.Screen
+      name="history"
+      options={{               
+        headerTitle: () => (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Ionicons name="document-text-outline" size={24} color="#4CAF50" />
+              <Text style={{ fontSize: 15, fontWeight: "600", marginLeft: 8, color: 'white' }}>
+               Sensor Data History
+              </Text>
+              <View style={{ alignSelf: 'flex-end' }}>
+              </View>
+            </View>
+          ),   
+       // headerShown: true,
+        title: "History",
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="file-tray-full-outline" size={size} color={color} />
+        ),
+      }}
+    />
       <Tabs.Screen
         name="profilePage"           
         options={{
@@ -267,6 +286,7 @@ export default function HomeLayout() {
           ),
         }}
       />
+
     </Tabs>
   );
 }

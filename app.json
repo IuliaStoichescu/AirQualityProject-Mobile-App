@@ -4,8 +4,8 @@
     "slug": "iotAirQualityProject",
     "extra": {
       "ENV_REGION": "eu-north-1",
-      "ENV_ENDPOINT": "",
-      "ENV_IDENTITY_POOL_ID": ""
+      "ENV_ENDPOINT": "*",
+      "ENV_IDENTITY_POOL_ID": "*"
     },
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,7 +17,9 @@
       "supportsTablet": true
     },
     "android": {
-      "permissions": ["android.permissions.POST_NOTIFICATIONS"],
+      "permissions": [
+        "android.permissions.POST_NOTIFICATIONS"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -47,7 +49,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true,

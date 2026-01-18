@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useState } from "react";
 import { useIot } from "../iot/iot_context";
 import { useFocusEffect } from "expo-router";
-import { CO2Chart } from "../helpers/chartsForSensors";
+import { SensorChart } from "../helpers/chartsForSensors";
 
 export default function ThirdRoute() {
   const [range, setRange] = useState<RangeKey>("day");
@@ -86,7 +86,7 @@ export default function ThirdRoute() {
                   </View>
                 ) : (
                   
-                  <CO2Chart range={range} data={humidity} NORMAL_MIN={NORMAL_MIN_HUMIDITY} NORMAL_MAX={NORMAL_MAX_HUMIDITY} name="Humidity" unit="%" outOfBoundsValue={100} />
+                  <SensorChart range={range} data={humidity} NORMAL_MIN={NORMAL_MIN_HUMIDITY} NORMAL_MAX={NORMAL_MAX_HUMIDITY} name="Humidity" unit="%" fieldName="humidity" />
                 )}
               </ScrollView>
             );

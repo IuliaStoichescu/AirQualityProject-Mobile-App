@@ -29,9 +29,6 @@ Amplify.configure({
   },
 })
 
-
-
-
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldPlaySound: false,

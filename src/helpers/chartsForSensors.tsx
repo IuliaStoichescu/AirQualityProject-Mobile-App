@@ -52,7 +52,7 @@ export function SensorChart({
 }: SensorChartProps) {
   const chartData = useMemo(() => {
     if (range === "day") {
-      // Last 24 hours - only show hours that have passed or have data
+     
       const hourlyData = new Map<number, number[]>();
       const now = new Date();
       const currentHour = now.getHours();
@@ -84,7 +84,7 @@ export function SensorChart({
         spacing: number;
       }[] = [];
 
-      // Only show up to current hour + 1
+     
       for (let h = 0; h <= currentHour; h++) {
         const values = hourlyData.get(h) || [];
         const agg = hourly.get(h);
@@ -108,7 +108,7 @@ export function SensorChart({
         xAxisLabel: "Hour of Day",
       };
     } else if (range === "week") {
-      // Last 7 days - show daily averages
+    
       const dailyData = new Map<string, { values: number[]; date: Date }>();
 
       data.forEach((item) => {
@@ -147,17 +147,17 @@ export function SensorChart({
         xAxisLabel: "Day of Week",
       };
     } else {
-      // Last 30 days - show weekly averages within this period
+     
       const now = new Date();
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
       
-      // Group data by week
+      
       const weeklyData = new Map<string, { values: number[]; weekStart: Date }>();
 
       data.forEach((item) => {
         const date = new Date(item.ts);
         
-        // Skip data older than 30 days
+       
         if (date < thirtyDaysAgo) return;
         
         const { start } = getWeekBounds(date);

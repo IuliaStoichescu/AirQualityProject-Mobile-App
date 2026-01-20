@@ -56,7 +56,7 @@ export const IotProvider = ({ children }: { children: React.ReactNode }) => {
     setBattery({
       level: bat,
       formatted: bat.toFixed(1),
-      isLow: bat < 20 && bat > 0
+      isLow: bat < 1 && bat > 0
     });
 
     const devID = latest["deviceID"] ? String(latest["deviceID"]) : null;

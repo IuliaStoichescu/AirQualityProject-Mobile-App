@@ -91,6 +91,25 @@ function RightHeaderGroup() {
   const { sensorData, connState,battery } = useIot();
   const [cloudVisible, setCloudVisible] = useState(false);
   const [batteryVisible, setBatteryVisible] = useState(false);
+  const getBatteryPercentage = (level: number): number => {
+  return level * 20 + 10; // Returns midpoint: 10%, 30%, 50%, 70%, 90%
+  };
+
+  const getBatteryIcon = (level: number): keyof typeof Ionicons.glyphMap => {
+    if (level === 0) return "battery-dead-outline";
+    if (level === 1) return "battery-half-outline";
+    if (level === 2) return "battery-half-outline";
+    if (level === 3) return "battery-half-outline";
+    return "battery-full-outline";
+  };
+
+  const getBatteryColor = (level: number): string => {
+    if (level === 0) return "red";
+    if (level === 1) return "orange";
+    if (level === 2) return "yellow";
+    if (level === 3) return "white";
+    return "#4CAF50";
+  };
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       
@@ -115,21 +134,21 @@ function RightHeaderGroup() {
         anchor={
           <Pressable onPress={() => setBatteryVisible(true)} style={{ marginRight: 15 }}>
               <Ionicons 
-                name={battery.level >= 0 && battery.level < 10 ? "battery-dead-outline" : 
-                      battery.level >= 10 && battery.level < 50 ? "battery-half-outline" : 
-                      battery.level >= 50 && battery.level <= 70 ? "battery-half-outline" : 
-                      "battery-full-outline"} 
+                name={getBatteryIcon(battery.level)} 
                 size={22} 
-                color={battery.level >= 0 && battery.level < 10 ? "red" : 
-                       battery.level >= 10 && battery.level < 50 ? "yellow" : 
-                       battery.level >= 50 && battery.level <= 70 ? "white" : "#4CAF50"} />
+                color={getBatteryColor(battery.level)} 
+              />
           </Pressable>
         }
       >
         <View style={{ padding: 10 }}>
-          <Text style={{ fontWeight: 'bold' }}>Device Battery Info</Text>
-          <Text>Level: {battery.level}%</Text>
-        </View>
+        <Text style={{ fontWeight: 'bold' }}>Device Battery Info</Text>
+        <Text>Level: {getBatteryPercentage(battery.level)}%</Text>
+        <Text>Status: {battery.level === 0 ? "Critical" : 
+                        battery.level === 1 ? "Low" : 
+                        battery.level === 2 ? "Medium" : 
+                        battery.level === 3 ? "Good" : "Excellent"}</Text>
+      </View>
       </Menu>
 
       <HeaderAvatar />
